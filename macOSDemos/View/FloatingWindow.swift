@@ -97,6 +97,7 @@ struct FloatingWindow: View {
 struct AlertWindowDemoView: View {
     @Environment(\.openWindow) private var openWindow
     var body: some View {
+        ContentView()
         Button("Show Alert Window") {
             openWindow(id: "AlertWindow")
         }
