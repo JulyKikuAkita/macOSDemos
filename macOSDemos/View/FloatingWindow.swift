@@ -15,7 +15,8 @@ import SwiftUI
 ///     .windowBackgroundDragBehavior(.enabled) /// drag-able on bg
 ///
 /// or 2: use FloatingWindow()..simultaneousGesture(WindowDragGesture()) /// when overlay a close button on floating window
-@main
+
+//@main
 struct FloatingWindowDemoApp: App {
     var body: some Scene {
         WindowGroup {
