@@ -28,8 +28,10 @@ struct XcodeOnBoardingView<Logo: View, Content: View>: View {
             gridLines()
             circleView()
             circleStokeView()
+            diagonalLines()
         }
-        .frame(width: 370, height: 450)
+        .frame(width: properties.convertToLogo ? 200 : 370, height: properties.convertToLogo ? 200 : 450)
+        .clipShape(.rect(cornerRadius: properties.convertToLogo ? 50 : 30))
         .background(.windowBackground)
         .clipShape(.rect(cornerRadius: 30))
         .onAppear {
@@ -64,8 +66,35 @@ struct XcodeOnBoardingView<Logo: View, Content: View>: View {
                 await delayAnimation(0.3, .linear(duration: 0.6)) {
                     properties.animateGridLines = true
                 }
+
+                await delayAnimation(0.15, .linear(duration: 0.5)) {
+                    properties.animateDiagonalLines = true
+                }
+
+                await delayAnimation(0.1, .bouncy(duration: 0.5, extraBounce: 0)) {
+                    properties.convertToLogo = true
+                }
             }
         }
+    }
+
+    func diagonalLines() -> some View {
+        ZStack {
+            Rectangle()
+                .fill(foregroundColor.tertiary)
+                .frame(width: 1, height: properties.animateDiagonalLines ? nil : 0)
+                .padding(.vertical, -100)
+                .frame(maxHeight: .infinity, alignment: .top)
+                .rotationEffect(.init(degrees: -39))
+
+            Rectangle()
+                .fill(foregroundColor.tertiary)
+                .frame(width: 1, height: properties.animateDiagonalLines ? nil : 0)
+                .padding(.vertical, -100)
+                .frame(maxHeight: .infinity, alignment: .top)
+                .rotationEffect(.init(degrees: 39))
+        }
+        .compositingGroup()
     }
 
     func gridLines() -> some View {
@@ -147,7 +176,7 @@ struct XcodeOnBoardingView<Logo: View, Content: View>: View {
                 let customizedValue: CGFloat = 12
                 /// 12 comes from customizeValue
                 let extraRotation: CGFloat = 20 + customizedValue
-                let extraOffset: CGFloat = index % 2 != 0 ? 40 : -20
+                let extraOffset: CGFloat = index % 2 != 0 ? 120 : 0
                 /// Fading 2 circles
                 let isFaded = index == 3 || index == 4
 
@@ -171,6 +200,8 @@ struct XcodeOnBoardingView<Logo: View, Content: View>: View {
         var positionCircles: Bool = false
         var animateStrokes: Bool = false
         var animateGridLines: Bool = false
+        var animateDiagonalLines: Bool = false
+        var convertToLogo: Bool = false
     }
 
     func delayAnimation(_ delay: Double, _ animation: Animation, perform action: @escaping () -> Void) async {
