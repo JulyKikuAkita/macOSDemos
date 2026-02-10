@@ -7,31 +7,82 @@
 
 import SwiftUI
 
-struct XcodeOnBoardingDemoView: View {
-    var body: some View {
-
+struct XcodeOnBoardingDemoView: App {
+    var body: some Scene {
+        WindowGroup(id: "OnBoarding") {
+            XcodeOnBoardingView(foregroundColor: .white, tint: .blue) { isAnimating in
+                Image(systemName: "hammer.fill")
+                    .font(.system(size: 250))
+                    .blendMode(.softLight)
+                    .scaleEffect(isAnimating ? 0.5 : 1)
+            } content: { isAnimating in
+                VStack(spacing: 15) {
+                    Text("Welcome to Xcode")
+                        .font(.largeTitle.bold())
+                    
+                    Button(action: {}) {
+                        Text("Continue")
+                            .fontWeight(.medium)
+                            .foregroundStyle(.white)
+                            .frame(maxWidth: 230)
+                            .padding(.vertical, 12)
+                            .background(.blue.gradient, in: .capsule)
+                    }
+                }
+                .buttonStyle(.plain)
+                .padding(.top, 20)
+            }
+            .gesture(WindowDragGesture())
+        }
+        .windowStyle(.plain)
+        .restorationBehavior(.disabled)
     }
 }
 
 struct XcodeOnBoardingView<Logo: View, Content: View>: View {
     var foregroundColor: Color
     var tint: Color
+    var onClose: () -> Void = {}
     @ViewBuilder var logo: (_ isAnimating: Bool) -> Logo
     @ViewBuilder var content: (_ isAnimating: Bool) -> Content
     /// View Properties
     @State private var properties: Properties = .init()
     var body: some View {
-        ZStack {
-            Circle()
-                .fill(tint.gradient)
-                .scaleEffect(properties.animateMAinCircircle ? 2 : 0)
-            gridLines()
-            circleView()
-            circleStokeView()
-            diagonalLines()
+        let layout = (
+            properties.convertToLogo ? AnyLayout(VStackLayout(spacing: 0)) : AnyLayout(ZStackLayout(alignment: .bottom))
+        )
+        layout {
+            ZStack {
+                Circle()
+                    .fill(tint.gradient)
+                    .scaleEffect(properties.animateMAinCircircle ? 2 : 0)
+                gridLines()
+                circleView()
+                circleStokeView()
+                diagonalLines()
+                
+                logo(properties.convertToLogo)
+                    .compositingGroup()
+                    .blur(radius: properties.convertToLogo ? 0 : 50)
+                    .opacity(properties.convertToLogo ? 1 : 0)
+                
+            }
+            .frame(width: properties.convertToLogo ? 200 : 370, height: properties.convertToLogo ? 200 : 450)
+            .clipShape(.rect(cornerRadius: properties.convertToLogo ? 50 : 30))
+            .contentShape(.rect)
+            
+            let isAnimating = properties.convertToLogo
+            content(isAnimating)
+                .visualEffect { content, proxy in
+                    content
+                        .offset(y: isAnimating ? 0 : proxy.size.height)
+                }
+                .opacity(isAnimating ? 1 : 0)
         }
-        .frame(width: properties.convertToLogo ? 200 : 370, height: properties.convertToLogo ? 200 : 450)
-        .clipShape(.rect(cornerRadius: properties.convertToLogo ? 50 : 30))
+        .frame(width: 370, height: 450)
+        .overlay(alignment: .topLeading) {
+            closeButton()
+        }
         .background(.windowBackground)
         .clipShape(.rect(cornerRadius: 30))
         .onAppear {
@@ -95,6 +146,7 @@ struct XcodeOnBoardingView<Logo: View, Content: View>: View {
                 .rotationEffect(.init(degrees: 39))
         }
         .compositingGroup()
+        .opacity(properties.convertToLogo ? 0 : 1)
     }
 
     func gridLines() -> some View {
@@ -132,6 +184,7 @@ struct XcodeOnBoardingView<Logo: View, Content: View>: View {
             }
         }
         .compositingGroup()
+        .opacity(properties.convertToLogo ? 0 : 1)
     }
 
     @ViewBuilder
@@ -170,6 +223,7 @@ struct XcodeOnBoardingView<Logo: View, Content: View>: View {
                 .trim(from: 0, to: properties.animateStrokes ? 1 : 0)
                 .stroke(foregroundColor, lineWidth: 1)
                 .frame(width: 70, height: 70)
+                .scaleEffect(properties.convertToLogo ? 2.5 : 1)
 
             ForEach(1...4, id: \.self) { index in
                 let rotation = (CGFloat(index) / 4.0) * 360
@@ -188,6 +242,21 @@ struct XcodeOnBoardingView<Logo: View, Content: View>: View {
             }
         }
         .compositingGroup()
+        .scaleEffect(properties.convertToLogo ? 1.5 : 1)
+        .opacity(properties.convertToLogo ? 0 : 1)
+    }
+    
+    func closeButton() -> some View {
+        Button {
+            onClose()
+        } label: {
+            Image(systemName: "xmark.circle.fill")
+                .foregroundStyle(.blue) // foregroundColor.tertiary
+                .padding(15)
+                .contentShape(.rect)
+        }
+        .buttonStyle(.plain)
+        .opacity(properties.convertToLogo ? 1 : 0)
     }
 
     /// Animation Properties
@@ -214,8 +283,25 @@ struct XcodeOnBoardingView<Logo: View, Content: View>: View {
 
 #Preview {
     XcodeOnBoardingView(foregroundColor: .white, tint: .blue) { isAnimating in
-
+        Image(systemName: "hammer.fill")
+            .font(.system(size: 250))
+            .blendMode(.softLight)
+            .scaleEffect(isAnimating ? 0.5 : 1)
     } content: { isAnimating in
-
+        VStack(spacing: 15) {
+            Text("Welcome to Xcode")
+                .font(.largeTitle.bold())
+            
+            Button(action: {}) {
+                Text("Continue")
+                    .fontWeight(.medium)
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: 230)
+                    .padding(.vertical, 12)
+                    .background(.blue.gradient, in: .capsule)
+            }
+        }
+        .buttonStyle(.plain)
+        .padding(.top, 20)
     }
 }
