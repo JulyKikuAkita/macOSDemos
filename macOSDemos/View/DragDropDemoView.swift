@@ -7,7 +7,7 @@
 
 import SwiftUI
 @available(macOS 26.0, *)
-@main
+//@main
 struct ScreenShotPreviewAnimationApp: App {
     var body: some Scene {
         WindowGroup {
