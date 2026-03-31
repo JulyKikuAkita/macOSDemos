@@ -65,6 +65,17 @@ fileprivate struct XcodeOnBoarding26View: View {
                         
                         screenshotView(items[activeIndex])
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .compositingGroup()
+                        /// option 1: same effect as option 2 using keyframeAnimator
+                            .animation(.easeInOut(duration: 0.35), value: activeIndex)
+                        /// option2: animation with keyframeAnimator
+//                            .keyframeAnimator(initialValue: CGFloat.zero, trigger: activeIndex) { content, blur in
+//                                content
+//                                    .blur(radius: blur)
+//                            } keyframes: { _ in
+//                                CubicKeyframe(25, duration: 0.25)
+//                                CubicKeyframe(0, duration: 0.25)
+//                            }
                             .clipShape(concentricShape)
                         
                     }
@@ -73,15 +84,62 @@ fileprivate struct XcodeOnBoarding26View: View {
                 .aspectRatio(screenRatio, contentMode: .fit)
                 .frame(height: 290)
                 .padding(.top, 10)
+                /// Zoom animation
+                .compositingGroup()
+                .scaleEffect(items[activeIndex].zoomScale, anchor: items[activeIndex].zoomAnchor)
             
-            /// misc UI contenst
-            VStack(spacing: 20) {
-                indicatorView()
+            /// misc UI content
+            VStack(spacing: 0) {
+                VStack(spacing: 20) {
+                    indicatorView()
+                        .offset(y: 10)
+                    
+                    textContentView()
+                }
+                .padding(.top, 30)
+                
+                continueButton()
+                    .padding(.top, 20)
             }
+            .background(variableBackground())
         }
         .padding(.vertical, 30)
+        .overlay(alignment: .top) {
+            HStack {
+                Button {
+                    if activeIndex == 0{
+                        onExit()
+                    } else {
+                        withAnimation(.smooth(duration: 0.5, extraBounce: 0)) {
+                            activeIndex = max(activeIndex - 1, 0)
+                        }
+                    }
+                } label: {
+                    Image(systemName: activeIndex == 0 ? "xmark": "chevron.left")
+                        .font(.caption)
+                        .contentTransition(.symbolEffect)
+                        .foregroundStyle(.secondary)
+                        .frame(width: 25, height: 25)
+                        .background(.ultraThinMaterial, in: .circle)
+                }
+                
+                Spacer(minLength: 0)
+                
+                Button {
+                    onSkip()
+                } label: {
+                    Image(systemName: "checkmark")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .frame(width: 25, height: 25)
+                        .background(.ultraThinMaterial, in: .circle)
+                }
+            }
+            .buttonStyle(.plain)
+            .padding(12)
+        }
         .frame(width: 600)
-        .clipShape(.rect(cornerRadius: 30))
+        .clipShape(.rect(cornerRadius: 30).inset(by: 0.6))
         .background {
             ZStack {
                 RoundedRectangle(cornerRadius: 30)
@@ -135,6 +193,7 @@ fileprivate struct XcodeOnBoarding26View: View {
                 .padding(.horizontal, -35)
                 .offset(y: 9)
         }
+        .padding(-3)
     }
     
     func indicatorView() -> some View {
@@ -148,6 +207,80 @@ fileprivate struct XcodeOnBoarding26View: View {
             }
         }
         .padding(.bottom, 5)
+    }
+    
+    func textContentView() -> some View {
+        ZStack {
+            ForEach(items.indices, id: \.self) { index in
+                let item = items[index]
+                let isActive: Bool = activeIndex == index
+                
+                VStack(spacing: 6) {
+                    Text(item.title)
+                        .font(.largeTitle)
+                        .fontWeight(.semibold)
+                        .lineLimit(1)
+                        .foregroundStyle(activeTint)
+                    
+                    Text(item.subtitle)
+                        .font(.title3)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(activeTint.opacity(0.8))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(maxWidth: .infinity)
+                .compositingGroup()
+                .opacity(isActive ? 1 : 0)
+            }
+        }
+        .compositingGroup()
+        .keyframeAnimator(initialValue: CGFloat.zero, trigger: activeIndex) { content, blur in
+            content
+                .blur(radius: blur)
+        } keyframes: { _ in
+            CubicKeyframe(25, duration: 0.25)
+            CubicKeyframe(0, duration: 0.25)
+        }
+        .clipShape(concentricShape)
+    }
+    
+    func continueButton() -> some View {
+        Button {
+            if activeIndex == items.count - 1 {
+                onComplete()
+            } else {
+                withAnimation(.smooth(duration: 0.5, extraBounce: 0)) {
+                    activeIndex = min(activeIndex + 1, items.count - 1)
+                }
+            }
+        } label: {
+            Text(activeIndex == items.count - 1 ? "Get Started" : "Continue")
+                .fontWeight(.medium)
+                .contentTransition(.numericText())
+                .foregroundStyle(.primary)
+                .frame(width: 300, height: 45)
+                .background(buttonTint.gradient, in: .capsule)
+                .contentShape(.capsule)
+        }
+        .buttonStyle(.plain)
+    }
+    
+    func variableBackground() -> some View {
+        Rectangle()
+            .fill(.windowBackground)
+            .mask {
+                LinearGradient(colors: [
+                    .black,
+                    .black,
+                    .black,
+                    .black.opacity(0.9),
+                    .black.opacity(0.4),
+                    .clear
+                ], startPoint: .bottom, endPoint: .top)
+            }
+            .padding(.top, -30)
+            .padding(.bottom, -50)
     }
     
     var activeTint: Color {

@@ -41,7 +41,7 @@ var sampleOnBoardingMenuItems: [OnBoardingItem] = [
         id: 3,
         title: "All New Spotlight Search",
         subtitle: "Customized your Mac by\nadding widgets.",
-        screenshot: NSImage(named: "fox"),
+        screenshot: NSImage(named: "IMG_3007"),
         zoomScale: 1.8,
         zoomAnchor: .init(x: 0.5, y: 1.1)
     ),
@@ -49,7 +49,7 @@ var sampleOnBoardingMenuItems: [OnBoardingItem] = [
         id: 2,
         title: "Customized Menu Bar Controls",
         subtitle: "Arrange and tweak controls\nfor a menu bar that adapts to you.",
-        screenshot: NSImage(named: "fox"),
+        screenshot: NSImage(named: "IMG_3008"),
         zoomScale: 1.8,
         zoomAnchor: .init(x: 0.5, y: 0.5)
     ),
