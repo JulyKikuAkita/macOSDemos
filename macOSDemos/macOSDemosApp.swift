@@ -8,10 +8,10 @@
 import SwiftUI
 
 //@main
-struct macOSDemosApp: App {
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-        }
-    }
-}
+//struct macOSDemosApp: App {
+//    var body: some Scene {
+//        WindowGroup {
+//            ContentView()
+//        }
+//    }
+//}
