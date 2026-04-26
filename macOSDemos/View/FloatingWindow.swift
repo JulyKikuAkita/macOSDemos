@@ -16,7 +16,6 @@ import SwiftUI
 ///
 /// or 2: use FloatingWindow()..simultaneousGesture(WindowDragGesture()) /// when overlay a close button on floating window
 
-//@main
 struct FloatingWindowDemoApp: App {
     var body: some Scene {
         WindowGroup {
@@ -98,7 +97,9 @@ struct FloatingWindow: View {
 struct AlertWindowDemoView: View {
     @Environment(\.openWindow) private var openWindow
     var body: some View {
-        ContentView()
+        if #available(macOS 26, *) {
+            ImageContainerView()
+        }
         Button("Show Alert Window") {
             openWindow(id: "AlertWindow")
         }

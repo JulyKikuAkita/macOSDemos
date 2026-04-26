@@ -7,7 +7,6 @@
 
 import SwiftUI
 @available(macOS 26.0, *)
-//@main
 struct ScreenShotPreviewAnimationApp: App {
     var body: some Scene {
         WindowGroup {
@@ -15,7 +14,7 @@ struct ScreenShotPreviewAnimationApp: App {
         }
 
         WindowGroup(id: "PREVIEWWINDOW", for: URL.self) { value in
-            PreviewWindowView(url: value)
+            DragDropPreviewWindowView(url: value)
                 .frame(
                     width: previewWindowSize.width,
                     height: previewWindowSize.height,
@@ -45,7 +44,7 @@ struct ScreenShotPreviewAnimationApp: App {
 }
 
 @available(macOS 26.0, *)
-fileprivate  struct PreviewWindowView: View {
+struct DragDropPreviewWindowView: View {
     @Binding var url: URL?
     /// View Properties
     @State private var previewImage: NSImage?

@@ -51,26 +51,6 @@
 
 import SwiftUI
 
-// MARK: - App Entry Point
-//
-// @main marks this struct as the application's single entry point.
-// The App protocol requires a `body: some Scene` that composes all top-level
-// windows. Every Scene (WindowGroup, Window, etc.) you want to open must be
-// listed here — SwiftUI won't find it otherwise.
-@main
-struct MacOS26ToastApp: App {
-    var body: some Scene {
-        WindowGroup {
-            MacOS26ToastDemoView()
-        }
-
-        // ToastWindow must be registered here so openWindow(value: MacToast)
-        // can find and instantiate it. Forgetting this line causes a runtime crash
-        // with "No Scene presenting type 'MacToast' is defined".
-        ToastWindow()
-    }
-}
-
 // MARK: - Demo View
 
 struct MacOS26ToastDemoView: View {

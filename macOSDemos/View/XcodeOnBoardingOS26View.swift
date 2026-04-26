@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-//@main
 @available(macOS 26.0, *)
 struct macOSOnBoardingDemo26App: App {
     var body: some Scene {
@@ -50,7 +49,7 @@ fileprivate struct XcodeOnBoarding26View: View {
     var onExit: () -> Void
     var onSkip: () -> Void
     var onComplete: () -> Void
-    /// View Properties
+    @Environment(\.dismiss) private var dismiss
     @State private var activeIndex: Int = 0
     var body: some View {
         VStack(spacing: 0) {
@@ -108,6 +107,7 @@ fileprivate struct XcodeOnBoarding26View: View {
             HStack {
                 Button {
                     if activeIndex == 0{
+                        dismiss()
                         onExit()
                     } else {
                         withAnimation(.smooth(duration: 0.5, extraBounce: 0)) {
@@ -126,6 +126,7 @@ fileprivate struct XcodeOnBoarding26View: View {
                 Spacer(minLength: 0)
                 
                 Button {
+                    dismiss()
                     onSkip()
                 } label: {
                     Image(systemName: "checkmark")
@@ -248,6 +249,7 @@ fileprivate struct XcodeOnBoarding26View: View {
     func continueButton() -> some View {
         Button {
             if activeIndex == items.count - 1 {
+                dismiss()
                 onComplete()
             } else {
                 withAnimation(.smooth(duration: 0.5, extraBounce: 0)) {

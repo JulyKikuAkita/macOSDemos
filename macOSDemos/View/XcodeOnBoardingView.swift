@@ -46,6 +46,7 @@ struct XcodeOnBoardingView<Logo: View, Content: View>: View {
     @ViewBuilder var logo: (_ isAnimating: Bool) -> Logo
     @ViewBuilder var content: (_ isAnimating: Bool) -> Content
     /// View Properties
+    @Environment(\.dismiss) private var dismiss
     @State private var properties: Properties = .init()
     var body: some View {
         let layout = (
@@ -248,6 +249,7 @@ struct XcodeOnBoardingView<Logo: View, Content: View>: View {
     
     func closeButton() -> some View {
         Button {
+            dismiss()
             onClose()
         } label: {
             Image(systemName: "xmark.circle.fill")
