@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-@main
+//@main
 @available(macOS 26.0, *)
 struct macOSOnBoardingDemo26App: App {
     var body: some Scene {
